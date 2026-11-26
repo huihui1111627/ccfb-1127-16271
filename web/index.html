@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>渔港冷库 · 倾斜分区查询执行器</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121c2f;
+    --panel-2: #17243a;
+    --line: #263653;
+    --text: #e8eefc;
+    --muted: #9db0d0;
+    --accent: #38bdf8;
+    --accent-2: #22c55e;
+    --warn: #f59e0b;
+    --bad: #ef4444;
+    --purple: #a78bfa;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #08101f 0%, #0d1628 100%);
+    color: var(--text);
+    font: 14px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+  header {
+    padding: 26px 32px 18px;
+    border-bottom: 1px solid var(--line);
+    background: radial-gradient(circle at 15% 0%, rgba(56,189,248,.18), transparent 35%),
+                radial-gradient(circle at 85% 0%, rgba(34,197,94,.12), transparent 30%);
+  }
+  header h1 { margin: 0 0 6px; font-size: 26px; letter-spacing: .5px; }
+  header p { margin: 0; color: var(--muted); max-width: 1100px; }
+  main { padding: 22px 32px 60px; max-width: 1560px; margin: 0 auto; }
+  .panel {
+    background: rgba(18,28,47,.92);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    margin: 16px 0;
+    box-shadow: 0 12px 30px rgba(0,0,0,.18);
+  }
+  .panel h2 { margin: 0 0 14px; font-size: 18px; }
+  .panel h3 { margin: 18px 0 10px; font-size: 15px; color: #dce8ff; }
+  .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; align-items: end; }
+  label.field { display: flex; flex-direction: column; gap: 6px; color: var(--muted); font-size: 12px; }
+  select, input {
+    width: 100%;
+    background: #0c1526;
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    padding: 9px 10px;
+    outline: none;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  .check { flex-direction: row !important; align-items: center; gap: 8px !important; color: var(--text) !important; font-size: 14px !important; }
+  .check input { width: 16px; height: 16px; }
+  button {
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-weight: 700;
+    color: #06111f;
+    background: linear-gradient(135deg, #67e8f9, #38bdf8);
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(56,189,248,.22);
+  }
+  button.secondary { background: #22314d; color: var(--text); box-shadow: none; border: 1px solid var(--line); }
+  button:disabled { opacity: .55; cursor: wait; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(155px, 1fr)); gap: 12px; }
+  .card { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .card .k { color: var(--muted); font-size: 12px; }
+  .card .v { font-size: 22px; font-weight: 800; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .card .sub { color: var(--muted); font-size: 12px; margin-top: 3px; }
+  .good { color: #86efac; }
+  .bad { color: #fca5a5; }
+  .warn { color: #fcd34d; }
+  .muted { color: var(--muted); }
+  .banner { border-radius: 12px; padding: 13px 15px; margin: 12px 0; border: 1px solid; font-weight: 650; }
+  .banner.ok { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.45); color: #bbf7d0; }
+  .banner.err { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.5); color: #fecaca; }
+  .banner.info { background: rgba(56,189,248,.1); border-color: rgba(56,189,248,.35); color: #bae6fd; }
+  .compare-bars { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 900px) { .compare-bars { grid-template-columns: 1fr; } }
+  .timebar { height: 34px; background: #0c1526; border-radius: 999px; overflow: hidden; border: 1px solid var(--line); margin: 8px 0; }
+  .timebar > div { height: 100%; border-radius: 999px; display: flex; align-items: center; padding-left: 12px; color: #06111f; font-weight: 800; white-space: nowrap; transition: width .35s ease; }
+  .offbar { background: linear-gradient(90deg, #fb7185, #f59e0b); }
+  .onbar { background: linear-gradient(90deg, #86efac, #22c55e); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { border-bottom: 1px solid var(--line); padding: 9px 8px; text-align: left; vertical-align: top; }
+  th { color: #c8d7f4; font-size: 12px; position: sticky; top: 0; background: #17243a; z-index: 1; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .tablewrap { overflow: auto; max-height: 620px; border: 1px solid var(--line); border-radius: 12px; }
+  .badge { display: inline-flex; align-items: center; border-radius: 999px; padding: 2px 9px; font-size: 12px; font-weight: 750; border: 1px solid var(--line); }
+  .badge.skew { color: #fecaca; background: rgba(239,68,68,.16); border-color: rgba(239,68,68,.45); }
+  .badge.normal { color: #bbf7d0; background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.35); }
+  .badge.split { color: #fde68a; background: rgba(245,158,11,.14); border-color: rgba(245,158,11,.4); }
+  .basis { color: #b9c8e6; font-size: 12px; max-width: 520px; }
+  details summary { cursor: pointer; color: var(--accent); font-size: 12px; }
+  .mini { font-size: 12px; color: var(--muted); }
+  .workers { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 16px; }
+  .worker-row { display: grid; grid-template-columns: 42px 1fr 150px; gap: 8px; align-items: center; margin: 7px 0; }
+  .track { height: 18px; background: #0c1526; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  .fill { height: 100%; border-radius: 5px; background: linear-gradient(90deg, #38bdf8, #818cf8); min-width: 2px; }
+  .fill.off { background: linear-gradient(90deg, #fb7185, #f59e0b); }
+  .fill.baseline { background: repeating-linear-gradient(45deg, #64748b, #64748b 6px, #475569 6px, #475569 12px); }
+  .worker-val { font-size: 11px; color: var(--muted); text-align: right; font-variant-numeric: tabular-nums; }
+  .timeline { border: 1px solid var(--line); border-radius: 12px; padding: 12px; background: #0c1526; overflow-x: auto; }
+  .lane { display: grid; grid-template-columns: 54px 1fr; gap: 10px; align-items: center; margin: 5px 0; min-width: 760px; }
+  .lane-label { color: var(--muted); font-size: 12px; text-align: right; font-family: var(--mono); }
+  .lane-track { position: relative; height: 24px; background: rgba(255,255,255,.035); border-radius: 6px; }
+  .task { position: absolute; top: 2px; bottom: 2px; border-radius: 5px; border: 1px solid rgba(255,255,255,.28); min-width: 2px; cursor: help; }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; color: var(--muted); font-size: 12px; margin-top: 10px; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; }
+  .accept-controls { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.35); border-top-color: white; border-radius: 50%; animation: spin .8s linear infinite; vertical-align: -2px; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  code { font-family: var(--mono); color: #bae6fd; }
+</style>
+</head>
+<body>
+<header>
+  <h1>渔港冷库 · 单机多线程倾斜分区查询执行器</h1>
+  <p>固定种子生成均匀 / 长尾 / 极端倾斜的渔船装卸明细；按船号 Hash 分区，运行时统计真实分区大小并自动拆分热点。支持船号+库号内连接、左/全外连接，以及分组汇总、每船 TopN。验收结果与单线程嵌套循环朴素实现排序后逐行比较。</p>
+</header>
+<main>
+  <section class="panel">
+    <div class="controls">
+      <label class="field">数据分布
+        <select id="dist">
+          <option value="uniform">uniform 均匀</option>
+          <option value="longtail">longtail 长尾</option>
+          <option value="extreme" selected>extreme 极端倾斜</option>
+        </select>
+      </label>
+      <label class="field">数据规模
+        <select id="scale">
+          <option value="small">small 700 行/侧</option>
+          <option value="acceptance" selected>acceptance 2400 行/侧</option>
+          <option value="standard">standard 6000 行/侧</option>
+          <option value="large">large 18000 行/侧（不跑朴素核对）</option>
+        </select>
+      </label>
+      <label class="field">查询
+        <select id="query"></select>
+      </label>
+      <label class="field">线程数
+        <input id="workers" type="number" min="1" max="64" value="8" />
+      </label>
+      <label class="field">分区数
+        <input id="partitions" type="number" min="1" max="128" value="16" />
+      </label>
+      <label class="field">中位数倍数
+        <input id="ratio" type="number" min="1" step="0.5" value="3" />
+      </label>
+      <label class="field">绝对行数阈值
+        <input id="minRows" type="number" min="0" step="50" value="500" />
+      </label>
+      <label class="field check"><input id="autoSplit" type="checkbox" checked />自动拆分</label>
+      <button id="runCompare">对比开 / 关并核对</button>
+    </div>
+    <div id="status" class="banner info" style="margin-top:14px;">准备就绪。默认极端倾斜 + 内连接最容易看到热点分区拆分。</div>
+  </section>
+
+  <section id="summaryPanel" class="panel" style="display:none;">
+    <h2>执行总览</h2>
+    <div id="cards" class="cards"></div>
+    <div id="correctness"></div>
+  </section>
+
+  <section id="timingPanel" class="panel" style="display:none;">
+    <h2>开启与关闭自动拆分耗时对比</h2>
+    <div class="compare-bars">
+      <div>
+        <div class="mini">关闭自动拆分（倾斜分区保持单任务）</div>
+        <div class="timebar"><div id="offBar" class="offbar" style="width:0%">0</div></div>
+        <div id="offTime" class="muted"></div>
+      </div>
+      <div>
+        <div class="mini">开启运行时倾斜检测与自动拆分</div>
+        <div class="timebar"><div id="onBar" class="onbar" style="width:0%">0</div></div>
+        <div id="onTime" class="muted"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="workerPanel" class="panel" style="display:none;">
+    <h2>拆分前后各线程负载</h2>
+    <div class="workers">
+      <div>
+        <h3>关闭拆分：实际线程忙碌时间</h3>
+        <div id="offWorkers"></div>
+      </div>
+      <div>
+        <h3>开启拆分：实际线程忙碌时间</h3>
+        <div id="onWorkers"></div>
+      </div>
+      <div>
+        <h3>拆分前静态轮询负载估算（工作单元）</h3>
+        <div id="baselineWorkers"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="timelinePanel" class="panel" style="display:none;">
+    <h2>任务时间线（开启拆分）</h2>
+    <div id="timeline" class="timeline"></div>
+    <div class="legend">
+      <span><span class="dot" style="background:#38bdf8"></span>普通/左主任务</span>
+      <span><span class="dot" style="background:#a78bfa"></span>右主任务</span>
+      <span><span class="dot" style="background:#22c55e"></span>聚合局部计算</span>
+      <span><span class="dot" style="background:#f59e0b"></span>整分区任务（未拆）</span>
+      <span class="muted">横向位置=开始时间，宽度=执行时长；鼠标悬停查看任务详情。</span>
+    </div>
+  </section>
+
+  <section id="partitionPanel" class="panel" style="display:none;">
+    <h2>分区真实行数、倾斜判定、拆分依据与处理时间</h2>
+    <div class="tablewrap">
+      <table id="partitionTable">
+        <thead>
+          <tr>
+            <th>P</th><th class="num">左/入库行</th><th class="num">右/出库行</th><th class="num">总行数</th>
+            <th class="num">估算工作</th><th>倾斜判定</th><th>拆分</th><th class="num">任务数</th>
+            <th class="num">墙钟 ms</th><th class="num">CPU ms</th><th>依据 / 子任务</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>固定种子验收矩阵</h2>
+    <div class="accept-controls">
+      <button class="secondary" id="loadReport">读取已生成 acceptance_report.json</button>
+      <button class="secondary" id="runQuickAcceptance">运行快速验收（small，24 项）</button>
+      <button class="secondary" id="runFullAcceptance">运行标准验收（acceptance，repeats=1）</button>
+    </div>
+    <div id="acceptanceSummary" class="muted">命令行可生成多次计时报告：<code>go run ./cmd/acceptance -repeats=5</code>。</div>
+    <div class="tablewrap" style="margin-top:12px; max-height:520px;">
+      <table id="acceptanceTable" style="display:none;">
+        <thead><tr>
+          <th>数据</th><th>查询</th><th class="num">结果行</th><th>一致</th>
+          <th class="num">倾斜/拆分</th><th class="num">关 ms</th><th class="num">开 ms</th><th class="num">加速</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+let lastCompare = null;
+
+function fmtMs(x) {
+  if (x === null || x === undefined || Number.isNaN(x)) return '-';
+  if (x < 0.01) return x.toFixed(4) + ' ms';
+  if (x < 1) return x.toFixed(3) + ' ms';
+  return x.toFixed(2) + ' ms';
+}
+function fmtNum(x) { return (x ?? 0).toLocaleString('zh-CN'); }
+function pct(x) { return (x * 100).toFixed(1) + '%'; }
+function setStatus(html, kind='info') {
+  const el = $('status');
+  el.className = 'banner ' + kind;
+  el.innerHTML = html;
+}
+async function fetchJSON(url, options) {
+  const res = await fetch(url, options);
+  const text = await res.text();
+  let data;
+  try { data = text ? JSON.parse(text) : {}; } catch (e) { throw new Error('返回不是 JSON: ' + text.slice(0, 200)); }
+  if (!res.ok) throw new Error(data.error || ('HTTP ' + res.status));
+  return data;
+}
+async function initQueries() {
+  const data = await fetchJSON('/api/queries');
+  const sel = $('query');
+  sel.innerHTML = data.queries.map(q => `<option value="${q.id}">${q.group} · ${q.name}</option>`).join('');
+  $('workers').value = data.cpu_count || 8;
+  try {
+    const rep = await fetchJSON('/acceptance_report.json');
+    renderAcceptance(rep);
+  } catch (_) { /* no precomputed report yet */ }
+}
+function queryParams(extra={}) {
+  const p = new URLSearchParams({
+    dist: $('dist').value,
+    scale: $('scale').value,
+    query: $('query').value,
+    workers: $('workers').value,
+    partitions: $('partitions').value,
+    ratio: $('ratio').value,
+    min_rows: $('minRows').value,
+    split: $('autoSplit').checked ? '1' : '0',
+    ...extra
+  });
+  return p.toString();
+}
+function metricCard(k, v, sub='', cls='') {
+  return `<div class="card"><div class="k">${k}</div><div class="v ${cls}">${v}</div><div class="sub">${sub}</div></div>`;
+}
+function renderCorrectness(resp) {
+  const c = resp.correctness;
+  let html = '';
+  if (c) {
+    html = c.pass
+      ? `<div class="banner ok">✅ 逐行验收通过：朴素嵌套循环 ${fmtNum(c.naive_rows)} 行 = 开拆分 ${fmtNum(c.optimized_rows)} 行 = 关拆分 ${fmtNum(c.off_rows)} 行；排序后含重复行完全一致。</div>`
+      : `<div class="banner err">❌ 结果不一致：${escapeHTML(c.difference || '未知差异')}</div>`;
+  } else {
+    html = resp.sameFingerprint
+      ? `<div class="banner ok">✅ 开/关结果行数与双校验指纹一致：${fmtNum(resp.on.trace.result_rows)} 行。大规模模式未运行朴素逐行核对。</div>`
+      : `<div class="banner err">❌ 开/关结果指纹或行数不一致，请立即检查。</div>`;
+  }
+  $('correctness').innerHTML = html;
+}
+function renderCards(resp) {
+  const on = resp.on.trace, off = resp.off.trace;
+  const speed = resp.speedup_median;
+  const speedCls = speed >= 1.2 ? 'good' : (speed < 0.9 ? 'bad' : 'warn');
+  $('cards').innerHTML = [
+    metricCard('关拆分中位耗时', fmtMs(resp.off.stats.median_ms), `最小 ${fmtMs(resp.off.stats.min_ms)}`),
+    metricCard('开拆分中位耗时', fmtMs(resp.on.stats.median_ms), `最小 ${fmtMs(resp.on.stats.min_ms)}`),
+    metricCard('中位加速比', speed.toFixed(2) + '×', speed >= 1 ? '拆分后更快' : '小数据/聚合开销可能占主导', speedCls),
+    metricCard('查询结果行数', fmtNum(on.result_rows), `指纹 ${on.fingerprint1.toString(16).padStart(16,'0')}`),
+    metricCard('倾斜分区', `${on.skew_partitions}/${on.partition_count}`, `实际拆分 ${on.split_partitions} 个`),
+    metricCard('开启时任务数', fmtNum(on.total_tasks), `检测耗时 ${fmtMs(on.detect_ms)}`),
+    metricCard('Trace 总耗时', fmtMs(on.total_elapsed_ms), `执行阶段 ${fmtMs(on.execute_ms)} / 合并 ${fmtMs(on.merge_ms)}`),
+    metricCard('线程 / 分区', `${on.workers} / ${on.partition_count}`, `runtime CPU ${on.runtime_cpu}`)
+  ].join('');
+}
+function renderTimeBars(resp) {
+  const off = resp.off.stats.median_ms, on = resp.on.stats.median_ms;
+  const max = Math.max(off, on, 0.0001);
+  $('offBar').style.width = Math.max(2, off / max * 100) + '%';
+  $('onBar').style.width = Math.max(2, on / max * 100) + '%';
+  $('offBar').textContent = fmtMs(off);
+  $('onBar').textContent = fmtMs(on);
+  $('offTime').innerHTML = `轮次：${resp.off.stats.runs_ms.map(fmtMs).join('，')}`;
+  $('onTime').innerHTML = `轮次：${resp.on.stats.runs_ms.map(fmtMs).join('，')}`;
+}
+function renderWorkerLoads(loads, elementId, kind) {
+  if (!loads || !loads.length) { $(elementId).innerHTML = '<span class="muted">无数据</span>'; return; }
+  const value = (l) => kind === 'baseline' ? Number(l.work_units || 0) : Number(l.busy_ms || 0);
+  const max = Math.max(...loads.map(value), 0.0001);
+  $(elementId).innerHTML = loads.map(l => {
+    const v = value(l);
+    const width = Math.max(1.5, v / max * 100);
+    const label = kind === 'baseline'
+      ? `${fmtNum(l.work_units)} 单元 · ${l.tasks} 分区`
+      : `${l.busy_ms.toFixed(2)} ms · ${l.tasks} 任务 · ${fmtNum(l.rows_in)} 输入行`;
+    return `<div class="worker-row">
+      <div class="lane-label">W${l.worker_id}</div>
+      <div class="track"><div class="fill ${kind === 'off' ? 'off' : (kind === 'baseline' ? 'baseline' : '')}" style="width:${width}%"></div></div>
+      <div class="worker-val">${label}</div>
+    </div>`;
+  }).join('');
+}
+function taskColor(t) {
+  if ((t.scope || '').includes('whole')) return '#f59e0b';
+  if ((t.scope || '').includes('R')) return '#a78bfa';
+  if ((t.scope || '').includes('agg') || (t.scope || '').includes('species') || (t.scope || '').includes('records')) return '#22c55e';
+  return `hsl(${(t.partition * 47 + 190) % 360} 72% 58%)`;
+}
+function renderTimeline(trace) {
+  const loads = trace.workers_load || [];
+  let maxEnd = 0;
+  loads.forEach(l => (l.intervals || []).forEach(i => { maxEnd = Math.max(maxEnd, i.end_ms || 0); }));
+  if (maxEnd <= 0) maxEnd = 1;
+  $('timeline').innerHTML = loads.map(l => {
+    const tasks = (l.intervals || []).map(i => {
+      const left = (i.start_ms / maxEnd * 100);
+      const width = Math.max(0.25, ((i.end_ms - i.start_ms) / maxEnd * 100));
+      const tt = findTask(trace, i.task_id);
+      const title = tt ? `${tt.scope} P${tt.partition} #${tt.split_index + 1}/${tt.split_count}\n开始 ${tt.start_ms.toFixed(2)}ms 时长 ${tt.duration_ms.toFixed(2)}ms\n输入 ${tt.rows_in} 行，配对 ${tt.matched_pairs}，输出 ${tt.rows_out}` : i.label;
+      return `<div class="task" style="left:${left}%;width:${width}%;background:${taskColor(tt || {scope:i.label, partition:i.partition})}" title="${escapeHTML(title)}"></div>`;
+    }).join('');
+    return `<div class="lane"><div class="lane-label">W${l.worker_id}</div><div class="lane-track">${tasks}</div></div>`;
+  }).join('');
+}
+function findTask(trace, id) {
+  for (const p of trace.partitions || []) {
+    for (const t of p.tasks || []) if (t.id === id) return t;
+  }
+  return null;
+}
+function escapeHTML(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function renderPartitions(trace) {
+  const tbody = $('partitionTable').querySelector('tbody');
+  tbody.innerHTML = (trace.partitions || []).map(p => {
+    const badge = p.skewed ? '<span class="badge skew">倾斜</span>' : '<span class="badge normal">正常</span>';
+    const split = p.split_enabled
+      ? `<span class="badge split">拆 ${p.requested_splits} 片</span><div class="mini">建议 ${p.suggested_splits}，实际任务 ${p.actual_tasks}</div>`
+      : `<span class="badge normal">不拆</span><div class="mini">建议 ${p.suggested_splits}</div>`;
+    const taskRows = (p.tasks || []).map(t => `<tr>
+        <td>${escapeHTML(t.scope)}</td><td class="num">${t.split_index + 1}/${t.split_count}</td>
+        <td class="num">W${t.worker_id}</td><td class="num">${fmtNum(t.rows_in)}</td>
+        <td class="num">${fmtNum(t.matched_pairs)}</td><td class="num">${t.duration_ms.toFixed(3)}</td>
+      </tr>`).join('');
+    return `<tr>
+      <td><b>P${p.index}</b></td>
+      <td class="num">${fmtNum(p.left_rows)}</td>
+      <td class="num">${fmtNum(p.right_rows)}</td>
+      <td class="num"><b>${fmtNum(p.input_rows)}</b></td>
+      <td class="num">${fmtNum(p.work_units)}</td>
+      <td>${badge}<div class="mini">边界 ${p.ratio_boundary.toFixed(1)}×中位 / &gt;${fmtNum(p.absolute_boundary)}</div></td>
+      <td>${split}</td>
+      <td class="num">${p.actual_tasks}</td>
+      <td class="num"><b>${p.duration_ms.toFixed(3)}</b></td>
+      <td class="num">${p.cpu_ms.toFixed(3)}</td>
+      <td class="basis">
+        <div>${escapeHTML(p.decision)}</div>
+        <div>${escapeHTML(p.split_basis || '')}</div>
+        ${taskRows ? `<details><summary>查看 ${p.tasks.length} 个子任务</summary>
+          <table style="margin-top:8px;"><thead><tr><th>类型</th><th>分片</th><th>线程</th><th class="num">输入</th><th class="num">配对</th><th class="num">ms</th></tr></thead><tbody>${taskRows}</tbody></table>
+        </details>` : ''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+function renderCompare(resp) {
+  lastCompare = resp;
+  $('summaryPanel').style.display = 'block';
+  $('timingPanel').style.display = 'block';
+  $('workerPanel').style.display = 'block';
+  $('timelinePanel').style.display = 'block';
+  $('partitionPanel').style.display = 'block';
+  renderCards(resp);
+  renderCorrectness(resp);
+  renderTimeBars(resp);
+  renderWorkerLoads(resp.off.trace.workers_load, 'offWorkers', 'off');
+  renderWorkerLoads(resp.on.trace.workers_load, 'onWorkers', 'on');
+  renderWorkerLoads(resp.on.trace.baseline_load, 'baselineWorkers', 'baseline');
+  renderTimeline(resp.on.trace);
+  renderPartitions(resp.on.trace);
+}
+async function runCompare() {
+  const btn = $('runCompare');
+  btn.disabled = true;
+  const old = btn.innerHTML;
+  btn.innerHTML = '<span class="spin"></span>执行中...';
+  setStatus('<span class="spin"></span>正在生成数据、运行朴素核对、并分别计时开/关自动拆分...', 'info');
+  try {
+    const resp = await fetchJSON('/api/compare?' + queryParams({repeats: 3}));
+    renderCompare(resp);
+    if (resp.correctness && resp.correctness.pass) {
+      setStatus(`完成：${resp.query.name}。朴素实现与开/关执行器共 ${fmtNum(resp.correctness.naive_rows)} 行排序后逐行一致；中位加速 ${resp.speedup_median.toFixed(2)}×。`, 'ok');
+    } else if (resp.correctness) {
+      setStatus('验收不一致，请查看红色错误详情。', 'err');
+    } else {
+      setStatus(`完成：开/关指纹一致；中位加速 ${resp.speedup_median.toFixed(2)}×。`, 'ok');
+    }
+  } catch (e) {
+    setStatus('执行失败：' + escapeHTML(e.message), 'err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = old;
+  }
+}
+function renderAcceptance(rep) {
+  $('acceptanceSummary').innerHTML = `<b class="good">${rep.passed_count}/${rep.total_count} 通过</b> · ${escapeHTML(rep.go_version)} · ${rep.os}/${rep.arch} · ${rep.workers} 线程 · ${rep.scale} · ${rep.repeats} 轮计时`;
+  const table = $('acceptanceTable');
+  table.style.display = '';
+  table.querySelector('tbody').innerHTML = rep.cases.map(c => `<tr>
+    <td>${escapeHTML(c.distribution)}</td>
+    <td>${escapeHTML(c.query_name)}${c.pass ? '' : '<div class="bad">'+escapeHTML(c.error || c.correctness.difference || '不一致')+'</div>'}</td>
+    <td class="num">${fmtNum(c.correctness.naive_rows)}</td>
+    <td>${c.pass ? '<span class="good">✅ 一致</span>' : '<span class="bad">❌ 失败</span>'}</td>
+    <td class="num">${c.skew_partitions}/${c.split_partitions}</td>
+    <td class="num">${c.off.median_ms.toFixed(2)}</td>
+    <td class="num">${c.on.median_ms.toFixed(2)}</td>
+    <td class="num ${c.speedup_median >= 1.2 ? 'good' : ''}">${c.speedup_median.toFixed(2)}×</td>
+  </tr>`).join('');
+}
+async function runAcceptance(url, label) {
+  const summary = $('acceptanceSummary');
+  summary.innerHTML = `<span class="spin"></span>${label}，请稍候...`;
+  try {
+    const rep = await fetchJSON(url);
+    renderAcceptance(rep);
+    setStatus(`验收矩阵完成：${rep.passed_count}/${rep.total_count} 通过。`, rep.all_pass ? 'ok' : 'err');
+  } catch (e) {
+    summary.innerHTML = '<span class="bad">运行失败：' + escapeHTML(e.message) + '</span>';
+  }
+}
+$('runCompare').addEventListener('click', runCompare);
+$('loadReport').addEventListener('click', async () => {
+  try { renderAcceptance(await fetchJSON('/acceptance_report.json?t=' + Date.now())); }
+  catch (e) { $('acceptanceSummary').innerHTML = '<span class="bad">读取失败：' + escapeHTML(e.message) + '</span>'; }
+});
+$('runQuickAcceptance').addEventListener('click', () => runAcceptance('/api/acceptance/run?scale=small&repeats=1', '正在运行 small 验收'));
+$('runFullAcceptance').addEventListener('click', () => runAcceptance('/api/acceptance/run?scale=acceptance&repeats=1', '正在运行标准验收'));
+initQueries()
+  .then(() => runCompare())
+  .catch(e => setStatus('初始化失败：' + escapeHTML(e.message), 'err'));
+</script>
+</body>
+</html>

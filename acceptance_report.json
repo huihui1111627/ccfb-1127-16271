@@ -1,0 +1,1266 @@
+{
+  "generated_at": "2026-11-27T00:31:18.090616+08:00",
+  "go_version": "go1.26.1",
+  "os": "darwin",
+  "arch": "arm64",
+  "cpu_count": 14,
+  "workers": 14,
+  "partitions": 16,
+  "skew_ratio": 3,
+  "skew_min_rows": 500,
+  "repeats": 5,
+  "scale": "acceptance",
+  "all_pass": true,
+  "passed_count": 24,
+  "total_count": 24,
+  "cases": [
+    {
+      "distribution": "uniform",
+      "query_id": "join_inner",
+      "query_name": "内连接（船号+库号）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 37141,
+        "optimized_rows": 37141,
+        "off_rows": 37141,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          3.019,
+          2.757,
+          3.092,
+          2.575,
+          2.821
+        ],
+        "min_ms": 2.575,
+        "median_ms": 2.821,
+        "mean_ms": 2.8528000000000002,
+        "max_ms": 3.092
+      },
+      "on": {
+        "runs_ms": [
+          2.957,
+          3.07,
+          3.025,
+          2.664,
+          2.683
+        ],
+        "min_ms": 2.664,
+        "median_ms": 2.957,
+        "mean_ms": 2.8798,
+        "max_ms": 3.07
+      },
+      "speedup_median": 0.9540074399729457,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.003,
+      "execute_ms_on": 2.013,
+      "total_ms_on": 2.683,
+      "total_ms_off": 2.821
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "join_left",
+      "query_name": "左外连接（入库 LEFT JOIN 出库）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 37261,
+        "optimized_rows": 37261,
+        "off_rows": 37261,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          2.66,
+          2.682,
+          3.102,
+          2.863,
+          2.689
+        ],
+        "min_ms": 2.66,
+        "median_ms": 2.689,
+        "mean_ms": 2.7992,
+        "max_ms": 3.102
+      },
+      "on": {
+        "runs_ms": [
+          2.788,
+          2.992,
+          2.872,
+          2.746,
+          2.938
+        ],
+        "min_ms": 2.746,
+        "median_ms": 2.872,
+        "mean_ms": 2.8672,
+        "max_ms": 2.992
+      },
+      "speedup_median": 0.9362813370473538,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.003,
+      "execute_ms_on": 2.29,
+      "total_ms_on": 2.938,
+      "total_ms_off": 2.689
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "join_full",
+      "query_name": "全外连接（FULL OUTER JOIN）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 37381,
+        "optimized_rows": 37381,
+        "off_rows": 37381,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          2.659,
+          2.894,
+          2.832,
+          2.896,
+          2.734
+        ],
+        "min_ms": 2.659,
+        "median_ms": 2.832,
+        "mean_ms": 2.803,
+        "max_ms": 2.896
+      },
+      "on": {
+        "runs_ms": [
+          2.668,
+          2.805,
+          2.614,
+          2.865,
+          2.727
+        ],
+        "min_ms": 2.614,
+        "median_ms": 2.727,
+        "mean_ms": 2.7358000000000002,
+        "max_ms": 2.865
+      },
+      "speedup_median": 1.0385038503850386,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 2.082,
+      "total_ms_on": 2.727,
+      "total_ms_off": 2.733
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "agg_ship",
+      "query_name": "按船号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 36,
+        "optimized_rows": 36,
+        "off_rows": 36,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.258,
+          0.194,
+          0.275,
+          0.252,
+          0.207
+        ],
+        "min_ms": 0.194,
+        "median_ms": 0.252,
+        "mean_ms": 0.23720000000000002,
+        "max_ms": 0.275
+      },
+      "on": {
+        "runs_ms": [
+          0.237,
+          0.189,
+          0.185,
+          0.193,
+          0.185
+        ],
+        "min_ms": 0.185,
+        "median_ms": 0.189,
+        "mean_ms": 0.19780000000000003,
+        "max_ms": 0.237
+      },
+      "speedup_median": 1.3333333333333333,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.002,
+      "execute_ms_on": 0.063,
+      "total_ms_on": 0.184,
+      "total_ms_off": 0.207
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "agg_ship_wh",
+      "query_name": "按船号+库号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 218,
+        "optimized_rows": 218,
+        "off_rows": 218,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.603,
+          0.624,
+          0.605,
+          0.601,
+          0.588
+        ],
+        "min_ms": 0.588,
+        "median_ms": 0.603,
+        "mean_ms": 0.6042,
+        "max_ms": 0.624
+      },
+      "on": {
+        "runs_ms": [
+          0.552,
+          0.51,
+          0.638,
+          0.51,
+          0.545
+        ],
+        "min_ms": 0.51,
+        "median_ms": 0.545,
+        "mean_ms": 0.5509999999999999,
+        "max_ms": 0.638
+      },
+      "speedup_median": 1.1064220183486237,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.002,
+      "execute_ms_on": 0.083,
+      "total_ms_on": 0.545,
+      "total_ms_off": 0.587
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "top_species",
+      "query_name": "每船重量前3鱼种",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 108,
+        "optimized_rows": 108,
+        "off_rows": 108,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.23,
+          0.253,
+          0.234,
+          0.221,
+          0.255
+        ],
+        "min_ms": 0.221,
+        "median_ms": 0.234,
+        "mean_ms": 0.2386,
+        "max_ms": 0.255
+      },
+      "on": {
+        "runs_ms": [
+          0.244,
+          0.223,
+          0.216,
+          0.235,
+          0.222
+        ],
+        "min_ms": 0.216,
+        "median_ms": 0.223,
+        "mean_ms": 0.22799999999999998,
+        "max_ms": 0.244
+      },
+      "speedup_median": 1.0493273542600898,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.002,
+      "execute_ms_on": 0.077,
+      "total_ms_on": 0.221,
+      "total_ms_off": 0.255
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "top_records_ship",
+      "query_name": "每船前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 108,
+        "optimized_rows": 108,
+        "off_rows": 108,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.702,
+          0.755,
+          0.813,
+          0.829,
+          0.736
+        ],
+        "min_ms": 0.702,
+        "median_ms": 0.755,
+        "mean_ms": 0.7669999999999998,
+        "max_ms": 0.829
+      },
+      "on": {
+        "runs_ms": [
+          0.681,
+          0.675,
+          0.671,
+          0.787,
+          0.833
+        ],
+        "min_ms": 0.671,
+        "median_ms": 0.681,
+        "mean_ms": 0.7294,
+        "max_ms": 0.833
+      },
+      "speedup_median": 1.1086637298091042,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.002,
+      "execute_ms_on": 0.688,
+      "total_ms_on": 0.833,
+      "total_ms_off": 0.736
+    },
+    {
+      "distribution": "uniform",
+      "query_id": "top_records_ship_wh",
+      "query_name": "每船每库前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 626,
+        "optimized_rows": 626,
+        "off_rows": 626,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          1.033,
+          1.067,
+          1.03,
+          0.95,
+          0.983
+        ],
+        "min_ms": 0.95,
+        "median_ms": 1.03,
+        "mean_ms": 1.0126,
+        "max_ms": 1.067
+      },
+      "on": {
+        "runs_ms": [
+          1.081,
+          1.023,
+          1.067,
+          0.912,
+          0.988
+        ],
+        "min_ms": 0.912,
+        "median_ms": 1.023,
+        "mean_ms": 1.0142,
+        "max_ms": 1.081
+      },
+      "speedup_median": 1.0068426197458458,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 0,
+      "split_partitions": 0,
+      "total_tasks_on": 16,
+      "detect_ms_on": 0.002,
+      "execute_ms_on": 0.585,
+      "total_ms_on": 0.987,
+      "total_ms_off": 0.98
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "join_inner",
+      "query_name": "内连接（船号+库号）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 199025,
+        "optimized_rows": 199025,
+        "off_rows": 199025,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          40.579,
+          40.676,
+          40.864,
+          40.991,
+          40.774
+        ],
+        "min_ms": 40.579,
+        "median_ms": 40.774,
+        "mean_ms": 40.7768,
+        "max_ms": 40.991
+      },
+      "on": {
+        "runs_ms": [
+          23.641,
+          23.973,
+          23.384,
+          23.458,
+          23.451
+        ],
+        "min_ms": 23.384,
+        "median_ms": 23.458,
+        "mean_ms": 23.581399999999995,
+        "max_ms": 23.973
+      },
+      "speedup_median": 1.7381703470031546,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 19,
+      "detect_ms_on": 0.011,
+      "execute_ms_on": 22.894,
+      "total_ms_on": 23.451,
+      "total_ms_off": 40.774
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "join_left",
+      "query_name": "左外连接（入库 LEFT JOIN 出库）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 199167,
+        "optimized_rows": 199167,
+        "off_rows": 199167,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          40.774,
+          40.64,
+          40.864,
+          40.955,
+          40.828
+        ],
+        "min_ms": 40.64,
+        "median_ms": 40.828,
+        "mean_ms": 40.812200000000004,
+        "max_ms": 40.955
+      },
+      "on": {
+        "runs_ms": [
+          23.713,
+          23.749,
+          24.091,
+          24.537,
+          23.407
+        ],
+        "min_ms": 23.407,
+        "median_ms": 23.749,
+        "mean_ms": 23.8994,
+        "max_ms": 24.537
+      },
+      "speedup_median": 1.7191460693081817,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 19,
+      "detect_ms_on": 0.009,
+      "execute_ms_on": 22.759,
+      "total_ms_on": 23.406,
+      "total_ms_off": 40.828
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "join_full",
+      "query_name": "全外连接（FULL OUTER JOIN）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 199319,
+        "optimized_rows": 199319,
+        "off_rows": 199319,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          40.449,
+          41.23,
+          42.127,
+          40.324,
+          40.841
+        ],
+        "min_ms": 40.324,
+        "median_ms": 40.841,
+        "mean_ms": 40.9942,
+        "max_ms": 42.127
+      },
+      "on": {
+        "runs_ms": [
+          24.259,
+          23.753,
+          23.561,
+          24.162,
+          24.171
+        ],
+        "min_ms": 23.561,
+        "median_ms": 24.162,
+        "mean_ms": 23.9812,
+        "max_ms": 24.259
+      },
+      "speedup_median": 1.6902988163231523,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 19,
+      "detect_ms_on": 0.014,
+      "execute_ms_on": 23.516,
+      "total_ms_on": 24.17,
+      "total_ms_off": 40.84
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "agg_ship",
+      "query_name": "按船号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 36,
+        "optimized_rows": 36,
+        "off_rows": 36,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.242,
+          0.21,
+          0.18,
+          0.19,
+          0.176
+        ],
+        "min_ms": 0.176,
+        "median_ms": 0.19,
+        "mean_ms": 0.19959999999999994,
+        "max_ms": 0.242
+      },
+      "on": {
+        "runs_ms": [
+          0.184,
+          0.171,
+          0.183,
+          0.186,
+          0.253
+        ],
+        "min_ms": 0.171,
+        "median_ms": 0.184,
+        "mean_ms": 0.1954,
+        "max_ms": 0.253
+      },
+      "speedup_median": 1.0326086956521738,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 21,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.05,
+      "total_ms_on": 0.252,
+      "total_ms_off": 0.176
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "agg_ship_wh",
+      "query_name": "按船号+库号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 215,
+        "optimized_rows": 215,
+        "off_rows": 215,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.636,
+          0.641,
+          0.595,
+          0.597,
+          0.637
+        ],
+        "min_ms": 0.595,
+        "median_ms": 0.636,
+        "mean_ms": 0.6212000000000001,
+        "max_ms": 0.641
+      },
+      "on": {
+        "runs_ms": [
+          0.631,
+          0.569,
+          0.552,
+          0.591,
+          0.6
+        ],
+        "min_ms": 0.552,
+        "median_ms": 0.591,
+        "mean_ms": 0.5886,
+        "max_ms": 0.631
+      },
+      "speedup_median": 1.0761421319796955,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 21,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.185,
+      "total_ms_on": 0.596,
+      "total_ms_off": 0.636
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "top_species",
+      "query_name": "每船重量前3鱼种",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 108,
+        "optimized_rows": 108,
+        "off_rows": 108,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.346,
+          0.342,
+          0.364,
+          0.328,
+          0.363
+        ],
+        "min_ms": 0.328,
+        "median_ms": 0.346,
+        "mean_ms": 0.3486,
+        "max_ms": 0.364
+      },
+      "on": {
+        "runs_ms": [
+          0.282,
+          0.294,
+          0.334,
+          0.359,
+          0.36
+        ],
+        "min_ms": 0.282,
+        "median_ms": 0.334,
+        "mean_ms": 0.3258,
+        "max_ms": 0.36
+      },
+      "speedup_median": 1.0359281437125747,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 21,
+      "detect_ms_on": 0.005,
+      "execute_ms_on": 0.077,
+      "total_ms_on": 0.359,
+      "total_ms_off": 0.362
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "top_records_ship",
+      "query_name": "每船前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 108,
+        "optimized_rows": 108,
+        "off_rows": 108,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.85,
+          0.789,
+          0.906,
+          0.829,
+          0.798
+        ],
+        "min_ms": 0.789,
+        "median_ms": 0.829,
+        "mean_ms": 0.8343999999999999,
+        "max_ms": 0.906
+      },
+      "on": {
+        "runs_ms": [
+          0.659,
+          0.629,
+          0.737,
+          0.717,
+          0.745
+        ],
+        "min_ms": 0.629,
+        "median_ms": 0.717,
+        "mean_ms": 0.6974,
+        "max_ms": 0.745
+      },
+      "speedup_median": 1.1562064156206415,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 21,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.586,
+      "total_ms_on": 0.745,
+      "total_ms_off": 0.798
+    },
+    {
+      "distribution": "longtail",
+      "query_id": "top_records_ship_wh",
+      "query_name": "每船每库前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 592,
+        "optimized_rows": 592,
+        "off_rows": 592,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.968,
+          0.998,
+          0.927,
+          0.947,
+          1.142
+        ],
+        "min_ms": 0.927,
+        "median_ms": 0.968,
+        "mean_ms": 0.9963999999999998,
+        "max_ms": 1.142
+      },
+      "on": {
+        "runs_ms": [
+          1.111,
+          0.96,
+          1.2,
+          1.153,
+          0.969
+        ],
+        "min_ms": 0.96,
+        "median_ms": 1.111,
+        "mean_ms": 1.0786,
+        "max_ms": 1.2
+      },
+      "speedup_median": 0.8712871287128713,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 21,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.592,
+      "total_ms_on": 0.966,
+      "total_ms_off": 1.137
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "join_inner",
+      "query_name": "内连接（船号+库号）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 465698,
+        "optimized_rows": 465698,
+        "off_rows": 465698,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          101.341,
+          103.687,
+          103.903,
+          102.621,
+          103.978
+        ],
+        "min_ms": 101.341,
+        "median_ms": 103.687,
+        "mean_ms": 103.106,
+        "max_ms": 103.978
+      },
+      "on": {
+        "runs_ms": [
+          28.558,
+          29.136,
+          30.966,
+          28.168,
+          28.153
+        ],
+        "min_ms": 28.153,
+        "median_ms": 28.558,
+        "mean_ms": 28.996199999999998,
+        "max_ms": 30.966
+      },
+      "speedup_median": 3.630751453182996,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.073,
+      "execute_ms_on": 27.152,
+      "total_ms_on": 28.153,
+      "total_ms_off": 103.978
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "join_left",
+      "query_name": "左外连接（入库 LEFT JOIN 出库）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 465862,
+        "optimized_rows": 465862,
+        "off_rows": 465862,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          105.304,
+          104.114,
+          103.786,
+          103.778,
+          104.615
+        ],
+        "min_ms": 103.778,
+        "median_ms": 104.114,
+        "mean_ms": 104.3194,
+        "max_ms": 105.304
+      },
+      "on": {
+        "runs_ms": [
+          28.073,
+          27.616,
+          27.943,
+          28.156,
+          27.949
+        ],
+        "min_ms": 27.616,
+        "median_ms": 27.949,
+        "mean_ms": 27.947400000000005,
+        "max_ms": 28.156
+      },
+      "speedup_median": 3.725142223335361,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.01,
+      "execute_ms_on": 26.983,
+      "total_ms_on": 27.948,
+      "total_ms_off": 104.615
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "join_full",
+      "query_name": "全外连接（FULL OUTER JOIN）",
+      "group": "关联",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 466035,
+        "optimized_rows": 466035,
+        "off_rows": 466035,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          104.548,
+          106.547,
+          103.907,
+          103.435,
+          103.764
+        ],
+        "min_ms": 103.435,
+        "median_ms": 103.907,
+        "mean_ms": 104.4402,
+        "max_ms": 106.547
+      },
+      "on": {
+        "runs_ms": [
+          27.599,
+          27.807,
+          27.572,
+          28.142,
+          27.459
+        ],
+        "min_ms": 27.459,
+        "median_ms": 27.599,
+        "mean_ms": 27.715799999999994,
+        "max_ms": 28.142
+      },
+      "speedup_median": 3.764882785608174,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.013,
+      "execute_ms_on": 26.703,
+      "total_ms_on": 27.459,
+      "total_ms_off": 103.763
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "agg_ship",
+      "query_name": "按船号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 36,
+        "optimized_rows": 36,
+        "off_rows": 36,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.238,
+          0.174,
+          0.175,
+          0.174,
+          0.251
+        ],
+        "min_ms": 0.174,
+        "median_ms": 0.175,
+        "mean_ms": 0.2024,
+        "max_ms": 0.251
+      },
+      "on": {
+        "runs_ms": [
+          0.289,
+          0.237,
+          0.179,
+          0.179,
+          0.192
+        ],
+        "min_ms": 0.179,
+        "median_ms": 0.192,
+        "mean_ms": 0.2152,
+        "max_ms": 0.289
+      },
+      "speedup_median": 0.9114583333333333,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.003,
+      "execute_ms_on": 0.049,
+      "total_ms_on": 0.192,
+      "total_ms_off": 0.249
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "agg_ship_wh",
+      "query_name": "按船号+库号汇总",
+      "group": "聚合",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 170,
+        "optimized_rows": 170,
+        "off_rows": 170,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.586,
+          0.58,
+          0.566,
+          0.6,
+          0.543
+        ],
+        "min_ms": 0.543,
+        "median_ms": 0.58,
+        "mean_ms": 0.575,
+        "max_ms": 0.6
+      },
+      "on": {
+        "runs_ms": [
+          0.603,
+          0.532,
+          0.498,
+          0.483,
+          0.498
+        ],
+        "min_ms": 0.483,
+        "median_ms": 0.498,
+        "mean_ms": 0.5227999999999999,
+        "max_ms": 0.603
+      },
+      "speedup_median": 1.1646586345381524,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.161,
+      "total_ms_on": 0.494,
+      "total_ms_off": 0.538
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "top_species",
+      "query_name": "每船重量前3鱼种",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 106,
+        "optimized_rows": 106,
+        "off_rows": 106,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.431,
+          0.384,
+          0.432,
+          0.427,
+          0.471
+        ],
+        "min_ms": 0.384,
+        "median_ms": 0.431,
+        "mean_ms": 0.429,
+        "max_ms": 0.471
+      },
+      "on": {
+        "runs_ms": [
+          0.314,
+          0.229,
+          0.293,
+          0.299,
+          0.335
+        ],
+        "min_ms": 0.229,
+        "median_ms": 0.299,
+        "mean_ms": 0.294,
+        "max_ms": 0.335
+      },
+      "speedup_median": 1.4414715719063544,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.01,
+      "execute_ms_on": 0.074,
+      "total_ms_on": 0.333,
+      "total_ms_off": 0.471
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "top_records_ship",
+      "query_name": "每船前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 106,
+        "optimized_rows": 106,
+        "off_rows": 106,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.797,
+          0.893,
+          0.839,
+          0.852,
+          0.849
+        ],
+        "min_ms": 0.797,
+        "median_ms": 0.849,
+        "mean_ms": 0.8459999999999999,
+        "max_ms": 0.893
+      },
+      "on": {
+        "runs_ms": [
+          0.64,
+          0.601,
+          0.611,
+          0.633,
+          0.621
+        ],
+        "min_ms": 0.601,
+        "median_ms": 0.621,
+        "mean_ms": 0.6212000000000001,
+        "max_ms": 0.64
+      },
+      "speedup_median": 1.3671497584541064,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.004,
+      "execute_ms_on": 0.444,
+      "total_ms_on": 0.621,
+      "total_ms_off": 0.849
+    },
+    {
+      "distribution": "extreme",
+      "query_id": "top_records_ship_wh",
+      "query_name": "每船每库前3条最大明细",
+      "group": "聚合/TopN",
+      "pass": true,
+      "correctness": {
+        "pass": true,
+        "naive_rows": 353,
+        "optimized_rows": 353,
+        "off_rows": 353,
+        "on_equals_naive": true,
+        "off_equals_naive": true,
+        "on_equals_off": true
+      },
+      "off": {
+        "runs_ms": [
+          0.921,
+          0.923,
+          0.958,
+          0.953,
+          0.925
+        ],
+        "min_ms": 0.921,
+        "median_ms": 0.925,
+        "mean_ms": 0.9359999999999999,
+        "max_ms": 0.958
+      },
+      "on": {
+        "runs_ms": [
+          0.826,
+          0.751,
+          0.788,
+          0.819,
+          0.759
+        ],
+        "min_ms": 0.751,
+        "median_ms": 0.788,
+        "mean_ms": 0.7886,
+        "max_ms": 0.826
+      },
+      "speedup_median": 1.1738578680203047,
+      "workers": 14,
+      "partition_count": 16,
+      "skew_partitions": 3,
+      "split_partitions": 3,
+      "total_tasks_on": 22,
+      "detect_ms_on": 0.003,
+      "execute_ms_on": 0.489,
+      "total_ms_on": 0.756,
+      "total_ms_off": 0.922
+    }
+  ]
+}
